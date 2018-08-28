@@ -1,0 +1,40 @@
+﻿아래 소스 코드는  마지막 수업(금요일) 지도위에 마킹하는 예제프로그램에서 이름까지 같이 마킹하는 예제문제 소스코드 입니다.
+
+
+﻿
+
+install.packages("ggmap")
+
+install.packages("ggplot2")
+
+library(ggplot2)
+
+library(ggmap)
+
+names <- c("1.도담삼봉/석문", "2.구담/옥순봉", "3.사인암", "4.하선암", "5.중선암", "6.상선암")
+addr <- c("충청북도 단양군 매포읍 삼봉로 644-33",
+          "충청북도 단양군 단성면 월악로 3827",
+          "충청북도 단양군 대강면 사인암2길 42",
+          "충청북도 단양군 단성면 선암계곡로 1337",
+          "충청북도 단양군 단성면 선암계곡로 868-2",
+          "충청북도 단양군 단성면 선암계곡로 790")
+    
+gc <- geocode(enc2utf8(addr))
+gc
+
+
+df <- data.frame(name=names, lon=gc$lon, lat=gc$lat)
+df<-na.omit(df)
+
+
+
+cen <- c(mean(df$lon), mean(df$lat))
+cen
+
+map <- get_googlemap(center=cen, maptype="roadmap", zoom=11, marker=gc)
+ggmap(map)
+
+
+# 단양팔경 이름 출력
+gmap <- ggmap(map)
+gmap + geom_text(data=df, aes(x=lon, y=lat), size=2, label=df$name)
